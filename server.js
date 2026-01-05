@@ -1,7 +1,12 @@
 import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
-dotenv.config();
+
+// Only load .env file in local development
+// In production (Railway), env vars are already in process.env
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 const app = express();
 app.use(express.json());
@@ -14,6 +19,14 @@ const {
 
 // Railway provides PORT automatically, fallback to 3000 for local dev
 const PORT = process.env.PORT || 3000;
+
+// Debug: Log environment info (without exposing sensitive values)
+console.log('🔍 Environment check:');
+console.log('  NODE_ENV:', process.env.NODE_ENV || 'not set');
+console.log('  PORT:', PORT);
+console.log('  VERIFY_TOKEN:', VERIFY_TOKEN ? '✅ set' : '❌ missing');
+console.log('  WHATSAPP_TOKEN:', WHATSAPP_TOKEN ? '✅ set' : '❌ missing');
+console.log('  PHONE_NUMBER_ID:', PHONE_NUMBER_ID ? '✅ set' : '❌ missing');
 
 // Check required environment variables
 const missingVars = [];
