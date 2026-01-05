@@ -81,6 +81,10 @@ app.get("/webhook", (req, res) => {
    WEBHOOK RECEIVER (POST)
 ================================ */
 app.post("/webhook", async (req, res) => {
+  // Log ALL incoming webhook requests
+  console.log("\n🔔 Webhook POST received at:", new Date().toISOString());
+  console.log("📦 Full request body:", JSON.stringify(req.body, null, 2));
+
   // Always respond immediately
   res.sendStatus(200);
 
@@ -89,19 +93,32 @@ app.post("/webhook", async (req, res) => {
     const change = entry?.changes?.[0];
     const value = change?.value;
 
+    console.log("🔍 Parsed entry:", entry ? "✅" : "❌");
+    console.log("🔍 Parsed change:", change ? "✅" : "❌");
+    console.log("🔍 Parsed value:", value ? "✅" : "❌");
+
     // Ignore non-message events
-    if (!value?.messages) return;
+    if (!value?.messages) {
+      console.log("⚠️  No messages in value, ignoring event");
+      console.log("   Value content:", JSON.stringify(value, null, 2));
+      return;
+    }
 
     const message = value.messages[0];
+    console.log("📨 Message object:", JSON.stringify(message, null, 2));
 
     // Only text messages (testing phase)
-    if (message.type !== "text") return;
+    if (message.type !== "text") {
+      console.log("⚠️  Message type is not 'text', it's:", message.type);
+      return;
+    }
 
     const from = message.from; // sender phone
     const text = message.text.body;
 
-    console.log("📩 Message from:", from);
-    console.log("💬 Text:", text);
+    console.log("✅ Processing text message:");
+    console.log("   📩 From:", from);
+    console.log("   💬 Text:", text);
 
     // Auto-reply (static)
     await sendMessage(from, "Bot is live ✅");
