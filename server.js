@@ -7,14 +7,24 @@ const app = express();
 app.use(express.json());
 
 const {
-  PORT,
   VERIFY_TOKEN,
   WHATSAPP_TOKEN,
   PHONE_NUMBER_ID
 } = process.env;
 
-if (!PORT || !VERIFY_TOKEN || !WHATSAPP_TOKEN || !PHONE_NUMBER_ID) {
-  throw new Error("Missing environment variables");
+// Railway provides PORT automatically, fallback to 3000 for local dev
+const PORT = process.env.PORT || 3000;
+
+// Check required environment variables
+const missingVars = [];
+if (!VERIFY_TOKEN) missingVars.push('VERIFY_TOKEN');
+if (!WHATSAPP_TOKEN) missingVars.push('WHATSAPP_TOKEN');
+if (!PHONE_NUMBER_ID) missingVars.push('PHONE_NUMBER_ID');
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingVars.join(', '));
+  console.error('Please set these variables in Railway dashboard under Variables tab');
+  throw new Error(`Missing environment variables: ${missingVars.join(', ')}`);
 }
 
 app.get("/", (req, res) => {
