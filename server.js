@@ -28,6 +28,23 @@ console.log('  VERIFY_TOKEN:', VERIFY_TOKEN ? '✅ set' : '❌ missing');
 console.log('  WHATSAPP_TOKEN:', WHATSAPP_TOKEN ? '✅ set' : '❌ missing');
 console.log('  PHONE_NUMBER_ID:', PHONE_NUMBER_ID ? '✅ set' : '❌ missing');
 
+// Debug: List all environment variable NAMES (not values) to see what's available
+console.log('\n📋 All environment variables available:');
+const envKeys = Object.keys(process.env).sort();
+console.log('  Total env vars:', envKeys.length);
+console.log('  Env var names:', envKeys.join(', '));
+
+// Check if Railway is setting variables with different names
+const railwayVars = envKeys.filter(key =>
+  key.includes('VERIFY') ||
+  key.includes('WHATSAPP') ||
+  key.includes('PHONE') ||
+  key.includes('TOKEN')
+);
+if (railwayVars.length > 0) {
+  console.log('\n🔑 Found variables with keywords:', railwayVars.join(', '));
+}
+
 // Check required environment variables
 const missingVars = [];
 if (!VERIFY_TOKEN) missingVars.push('VERIFY_TOKEN');
